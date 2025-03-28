@@ -1,4 +1,4 @@
-package com.vms.db;
+package com.vms.db.connector;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
