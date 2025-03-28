@@ -20,6 +20,12 @@ public class DatabaseMigrator {
         this.dataWriter = new DataWriter(destino);
     }
 
+    public DatabaseMigrator(SchemaReader schemaReader, DataReader dataReader, DataWriter dataWriter) {
+        this.schemaReader = schemaReader;
+        this.dataReader = dataReader;
+        this.dataWriter = dataWriter;
+    }
+
     public void migrarTudo() throws SQLException {
         List<String> tabelas = schemaReader.listarTabelas();
         for (String tabela : tabelas) {
