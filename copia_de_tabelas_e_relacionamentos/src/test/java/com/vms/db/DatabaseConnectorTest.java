@@ -1,43 +1,31 @@
 package com.vms.db;
 
+import com.vms.db.connector.ConnectionFactory;
 import com.vms.db.connector.DatabaseConnector;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class DatabaseConnectorTest {
 
-    private final String testConfigPath = "src/test/resources/testdb.properties";
-
-    @BeforeEach
-    void setup() throws IOException {
-        // Criar arquivo de teste temporário
-        try (FileWriter writer = new FileWriter(testConfigPath)) {
-            writer.write("db.url=localhost\n");
-            writer.write("db.port=5432\n");
-            writer.write("db.banco=postgres\n");
-            writer.write("db.user=postgres\n");
-            writer.write("db.password=123456\n");
-        }
-    }
-
     @Test
-    void deveConectarComSucesso() {
-        DatabaseConnector connector = new DatabaseConnector(testConfigPath);
-        Connection connection = connector.getConnection();
+    void deveRetornarConexaoDaFactory() {
+        // Arrange
+        Connection fakeConnection = mock(Connection.class);
+        ConnectionFactory factoryMock = mock(ConnectionFactory.class);
+        when(factoryMock.createConnection()).thenReturn(fakeConnection);
 
-        assertNotNull(connection, "A conexão não deveria ser nula");
+        DatabaseConnector connector = new DatabaseConnector(factoryMock);
 
-        try {
-            assertFalse(connection.isClosed(), "A conexão não deveria estar fechada");
-            connection.close();
-        } catch (Exception e) {
-            fail("Erro ao verificar ou fechar a conexão: " + e.getMessage());
-        }
+        // Act
+        Connection conn = connector.getConnection();
+
+        // Assert
+        assertNotNull(conn, "A conexão não deveria ser nula");
+        assertEquals(fakeConnection, conn, "A conexão retornada deve ser a da factory");
+        verify(factoryMock, times(1)).createConnection();
     }
 }
