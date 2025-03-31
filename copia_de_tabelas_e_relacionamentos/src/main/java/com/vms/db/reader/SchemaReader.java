@@ -1,6 +1,7 @@
 package com.vms.db.reader;
 
 import com.vms.db.model.ForeignKeyInfo;
+import com.vms.db.model.SchemaTables;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,23 +15,26 @@ public class SchemaReader {
         this.connection = connection;
         try {
             this.meta = connection.getMetaData();
+            System.out.println("this.meta: " + this.meta.getSchemas().toString());
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao obter metadados do banco de dados\n" + e.getMessage(), e);
         }
     }
 
-    public List<String> listarTabelas() {
+    public List<SchemaTables> listarTabelas() {
         try {
-            List<String> tabelas = new ArrayList<>();
+            List<SchemaTables> tabelas = new ArrayList<>();
             ResultSet rs = meta.getTables(null, null, "%", new String[]{"TABLE"});
 
             while (rs.next()) {
-                tabelas.add(rs.getString("TABLE_NAME"));
+                tabelas.add(new SchemaTables(rs.getString("TABLE_SCHEM"), rs.getString("TABLE_NAME")));
             }
 
             rs.close();
             return tabelas;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new RuntimeException("Erro ao listar tabelas do banco de dados\n" + e.getMessage(), e);
         }
     }
