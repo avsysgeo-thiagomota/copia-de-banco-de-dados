@@ -10,14 +10,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // Inicializa configuração de logging (arquivo + console)
-        LogConfig.configurar();
-//        DatabaseConnector origem = new DatabaseConnector(
-//                    new PostgresConnectionFactory("origem.properties")::createConnection
-//            );
-//        SchemaReader schemaReader = new SchemaReader(origem.getConnection());
-//        System.out.println(schemaReader.listarTabelas());
-
         try {
             // Conecta ao banco de origem usando propriedades externas
             DatabaseConnector origem = new DatabaseConnector(
