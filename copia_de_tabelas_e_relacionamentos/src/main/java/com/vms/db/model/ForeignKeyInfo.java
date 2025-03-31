@@ -1,18 +1,24 @@
+/*Um record é um tipo especial de classe introduzido no Java 14 (como preview) e estável a partir do Java 16.
+Ele serve para representar dados imutáveis, ou seja: objetos que apenas carregam valores e não têm lógica de comportamento complexa.
+
+É sempre imutável
+Campos são final automaticamente
+Sem setters
+Segurança contra mudanças acidentais
+Gera automaticamente:
+- equals() e hashCode() (com base nos campos)
+- toString() (você pode sobrescrever se quiser)
+ - Getters no estilo nomeDoCampo() (sem o get)
+ */
+
 package com.vms.db.model;
 
-public class ForeignKeyInfo {
-    public final String tabelaOrigem;
-    public final String colunaOrigem;
-    public final String tabelaReferencia;
-    public final String colunaReferencia;
-
-    public ForeignKeyInfo(String tabelaOrigem, String colunaOrigem, String tabelaReferencia, String colunaReferencia) {
-        this.tabelaOrigem = tabelaOrigem;
-        this.colunaOrigem = colunaOrigem;
-        this.tabelaReferencia = tabelaReferencia;
-        this.colunaReferencia = colunaReferencia;
-    }
-
+public record ForeignKeyInfo(
+        String tabelaOrigem,
+        String colunaOrigem,
+        String tabelaReferencia,
+        String colunaReferencia
+) {
     @Override
     public String toString() {
         return tabelaOrigem + "." + colunaOrigem + " -> " + tabelaReferencia + "." + colunaReferencia;

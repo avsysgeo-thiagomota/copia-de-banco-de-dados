@@ -18,7 +18,7 @@ class DatabaseConnectorTest {
         ConnectionFactory factoryMock = mock(ConnectionFactory.class);
         when(factoryMock.createConnection()).thenReturn(fakeConnection);
 
-        DatabaseConnector connector = new DatabaseConnector(factoryMock);
+        DatabaseConnector connector = new DatabaseConnector(factoryMock::createConnection);
 
         // Act
         Connection conn = connector.getConnection();

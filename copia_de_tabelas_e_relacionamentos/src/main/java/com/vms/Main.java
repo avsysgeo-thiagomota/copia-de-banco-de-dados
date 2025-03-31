@@ -7,37 +7,33 @@ import com.vms.db.migrator.DatabaseMigrator;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.function.Supplier;
 
 public class Main {
-    private static ResourceBundle rb = ResourceBundle.getBundle("origem");
+
+    private static DatabaseConnector origem;
+    private static DatabaseConnector destino;
 
     public static void main(String[] args) {
 
-        DatabaseConnector origem = new DatabaseConnector(
-                new PostgresConnectionFactory("origem.properties")
-        );
-        DatabaseConnector destino = new DatabaseConnector(
-                new PostgresConnectionFactory("destino.properties")
+        origem = new DatabaseConnector(
+                new PostgresConnectionFactory("origem.properties")::createConnection
         );
 
-        try (Connection connectionOrigem = origem.getConnection();
-             Connection connectionDestino = destino.getConnection();)
-        {
-            System.out.println("Conectado com sucesso!");
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeException("Erro ao se connercar aos bancos de dados\n" + e.getMessage(), e);
-        }
+        destino = new DatabaseConnector(
+                new PostgresConnectionFactory("destino.properties")::createConnection
+        );
 
-        try
-        {
-            DatabaseMigrator migrator = new DatabaseMigrator(origem.getConnection(), destino.getConnection());
-            migrator.migrarTudo();
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeException("Erro ao executar a migração de banco de dados\n" + e.getMessage(), e);
-        }
+        System.out.println("Bancos conectados com sucesso!");
+
+//        try
+//        {
+//            DatabaseMigrator migrator = new DatabaseMigrator(origem.getConnection(), destino.getConnection());
+//            migrator.migrarTudo();
+//        }
+//        catch (SQLException e)
+//        {
+//            throw new RuntimeException("Erro ao executar a migração de banco de dados\n" + e.getMessage(), e);
+//        }
     }
 }
