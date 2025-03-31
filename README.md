@@ -94,6 +94,4 @@ db.password=Senha
 
 ## Vídeo de demonstração
 
-<video width="560" height="315" controls>
-  <source src="video.mov" type="video/mp4">
-</video>
+https://youtu.be/SaJIGLae4oo?si=tHcnLBXGgPpMXGYV
