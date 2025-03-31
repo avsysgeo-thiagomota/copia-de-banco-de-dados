@@ -14,9 +14,9 @@ Gera automaticamente:
 package com.vms.db.model;
 
 public record ForeignKeyInfo(
-        String tabelaOrigem,
+        SchemaAndTable tabelaOrigem,
         String colunaOrigem,
-        String tabelaReferencia,
+        SchemaAndTable tabelaReferencia,
         String colunaReferencia
 ) {
     @Override
