@@ -21,6 +21,7 @@ class DatabaseMigratorTest {
     private DataReader dataReader;
     private DataWriter dataWriter;
 
+    // Prepara os mocks antes de cada teste
     @BeforeEach
     void setup() {
         origemConn = mock(Connection.class);
@@ -31,9 +32,9 @@ class DatabaseMigratorTest {
         dataWriter = mock(DataWriter.class);
     }
 
+    // Testa o fluxo completo de migração com sucesso
     @Test
     void deveMigrarTodasAsTabelas() throws Exception {
-        // Simular tabela e dados
         List<String> tabelas = List.of("clientes");
         List<Map<String, Object>> dadosClientes = List.of(
                 Map.of("id", 1, "nome", "Ana"),
@@ -43,15 +44,34 @@ class DatabaseMigratorTest {
         when(schemaReader.listarTabelas()).thenReturn(tabelas);
         when(dataReader.lerDados("clientes")).thenReturn(dadosClientes);
 
-        // Criar migrador com injeção de mocks via construtor "manual"
         DatabaseMigrator migrator = new DatabaseMigrator(schemaReader, dataReader, dataWriter);
-
-        // Executar
         migrator.migrarTudo();
 
-        // Verificações
-        verify(schemaReader, times(1)).listarTabelas();
-        verify(dataReader, times(1)).lerDados("clientes");
-        verify(dataWriter, times(1)).inserirDados("clientes", dadosClientes);
+        verify(schemaReader).listarTabelas();
+        verify(dataReader).lerDados("clientes");
+        verify(dataWriter).inserirDados("clientes", dadosClientes);
+    }
+
+    // Testa se a migração continua mesmo quando uma tabela falha
+    @Test
+    void deveContinuarMigracaoMesmoComErroEmUmaTabela() throws Exception {
+        List<String> tabelas = List.of("clientes", "pedidos");
+
+        when(schemaReader.listarTabelas()).thenReturn(tabelas);
+        when(dataReader.lerDados("clientes")).thenThrow(new RuntimeException("Erro simulado"));
+
+        List<Map<String, Object>> dadosPedidos = List.of(
+                Map.of("id", 100, "valor", 200.0)
+        );
+        when(dataReader.lerDados("pedidos")).thenReturn(dadosPedidos);
+
+        DatabaseMigrator migrator = new DatabaseMigrator(schemaReader, dataReader, dataWriter);
+        migrator.migrarTudo();
+
+        verify(schemaReader).listarTabelas();
+        verify(dataReader).lerDados("clientes");
+        verify(dataReader).lerDados("pedidos");
+        verify(dataWriter).inserirDados("pedidos", dadosPedidos);
+        verify(dataWriter, never()).inserirDados(eq("clientes"), any());
     }
 }
